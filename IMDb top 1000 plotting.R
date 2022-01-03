@@ -43,5 +43,6 @@ Frequency <- c(C_A, C_U, C_R, C_UA, C_UA13, C_12, C_PG)
 
 barplot(Frequency, names.arg = Certificate, xlab = "Ratings", ylab = "Frequency")
 ggplot(Movie_Dataframe, mapping = aes(x=Run_Time, y=Rating)) +  geom_point()
+ggplot(Movie_Dataframe, mapping = aes(x=Rating, y=Genre)) +  geom_point()
 
 
