@@ -21,7 +21,7 @@ C_UA13=0
 C_12 = 0
 C_PG = 0
 
-for(element in movie_certificate) {
+for(element in movie_data$Certificate) {
   if(element == "A" || element == "18") { 
     C_A = C_A + 1}
   if(element == "U") { 
@@ -41,9 +41,9 @@ for(element in movie_certificate) {
 Certificate <- c("A", "U", "R", "UA", "UA13", "12", "PG")
 Frequency <- c(C_A, C_U, C_R, C_UA, C_UA13, C_12, C_PG)
 
-barplot(Frequency, names.arg = Certificate, xlab = "Ratings", ylab = "Frequency")
-ggplot(Movie_Dataframe, mapping = aes(x=Run_Time, y=Rating)) +  geom_point()
-ggplot(Movie_Dataframe, mapping = aes(x=Rating, y=Genre)) +  geom_point()
+barplot(Frequency, names.arg = Certificate, xlab = "Certificate", ylab = "Frequency")
+ggplot(movie_data, mapping = aes(x=Runtime, y=Rating)) +  geom_point()
+ggplot(movie_data, mapping = aes(x=Rating, y=Genre)) +  geom_point()
 
 Count_1 = 0
 Count_2 = 0
@@ -57,7 +57,7 @@ Count_9 = 0
 Count_10 = 0
 Count_11 = 0
 
-for(element in movie_genre)
+for(element in movie_data$Genre)
 { 
   y = unlist(strsplit(element,","))
   if(str_contains(y, c("Action","War","Adventure"),ignore.case = TRUE,logic = "or"))
@@ -87,7 +87,7 @@ Count_less9 = 0
 Count_less9.5 = 0
 Count_less10 = 0
 
-for(element in movie_rating)
+for(element in movie_data$Rating)
 {
   if(element < 8.5)
   Count_less8.5 = Count_less8.5+1
