@@ -1,4 +1,7 @@
-
+############
+#This R program reads the csv file with data from IMDb website and makes
+#multiple plots to help visualise the data. 
+#############
 # Package names
 packages <- c("ggplot2", "readr", "dplyr", "tidyverse", "rvest", "knitr", "xml2", "sjmisc")
 
@@ -9,7 +12,7 @@ if (any(installed_packages == FALSE)) {
 }
 
 # Packages loading
-invisible(lapply(packages, library, character.only = TRUE))
+lapply(packages, library, character.only = TRUE)
 
 movie_data <- read.csv("movie_data.csv")
 
@@ -43,7 +46,6 @@ Frequency <- c(C_A, C_U, C_R, C_UA, C_UA13, C_12, C_PG)
 
 barplot(Frequency, names.arg = Certificate, xlab = "Certificate", ylab = "Frequency")
 ggplot(movie_data, mapping = aes(x=Runtime, y=Rating)) +  geom_point()
-ggplot(movie_data, mapping = aes(x=Rating, y=Genre)) +  geom_point()
 
 Count_1 = 0
 Count_2 = 0

@@ -1,3 +1,7 @@
+#######
+#This R program scraps data from the IMDb website and saves it in a the form
+#of a csv file. 
+########
 
 # Package names
 packages <- c("ggplot2", "readr", "dplyr", "tidyverse", "rvest", "knitr", "xml2")
@@ -9,18 +13,20 @@ if (any(installed_packages == FALSE)) {
 }
 
 # Packages loading
-invisible(lapply(packages, library, character.only = TRUE))
+lapply(packages, library, character.only = TRUE)
+Movie_Dataframe = data.frame()
 
+for(i in seq(from = 1, to = 1000, by = 250))
+{
+  url <- paste0("https://www.imdb.com/search/title/?groups=top_1000&sort=user_rating,desc&count=250&start=", i, "&ref_=adv_nxt")
+  doc <- read_html(url)
 
-url <- "https://www.imdb.com/search/title/?count=100&groups=top_1000&sort=user_rating"
-doc <- read_html(url)
-Movie_Dataframe = data.frame(Name = doc %>% html_nodes(".lister-item-header") %>% html_text(),
-           Rating=doc %>% html_nodes(".rating-rating") %>% html_text(),
-           Runtime=parse_number(doc %>% html_nodes(".runtime") %>% html_text()), 
-           Genre=doc %>% html_nodes(".genre") %>% html_text(),
-           Certificate=c(doc %>% html_nodes(".certificate") %>% html_text(),rep(NA, 6)))
-  
-#Put the data in a dataframe
+  Movie_Dataframe = rbind(Movie_Dataframe, data.frame(Name = doc %>% html_nodes(".lister-item-header a") %>% html_text(),
+                               Rating=doc %>% html_nodes(".ratings-imdb-rating strong") %>% html_text(),
+                               Runtime=parse_number(doc %>% html_nodes(".runtime") %>% html_text()), 
+                               Genre=doc %>% html_nodes(".genre") %>% html_text(), 
+                               Certificate=c(doc %>% html_nodes(".certificate") %>% html_text(),rep(NA, 250-length(doc %>% html_nodes(".certificate"))))))
+}
 
 movie_csv <- write.csv(Movie_Dataframe, "./movie_data.csv", row.names = FALSE)
 
