@@ -3,7 +3,7 @@
 #multiple plots to help visualise the data. 
 #############
 # Package names
-packages <- c("ggplot2", "readr", "dplyr", "tidyverse", "rvest", "knitr", "xml2", "sjmisc")
+packages <- c("ggplot2", "readr", "dplyr", "tidyverse", "rvest", "knitr", "xml2", "sjmisc", "ggcorrplot")
 
 # Install packages not yet installed
 installed_packages <- packages %in% rownames(installed.packages())
@@ -16,93 +16,159 @@ lapply(packages, library, character.only = TRUE)
 
 movie_data <- read.csv("movie_data.csv")
 
-C_A = 0
-C_U = 0
-C_R = 0
-C_UA = 0
-C_UA13=0
-C_12 = 0
-C_PG = 0
 
-for(element in movie_data$Certificate) {
-  if(element == "A" || element == "18") { 
-    C_A = C_A + 1}
-  if(element == "U") { 
-    C_U = C_U + 1}
-  if(element == "R") { 
-    C_R = C_R + 1}
-  if(element == "UA" || element == "7" ) { 
-    C_UA = C_UA + 1}
-  if(element == "UA13+" || element == "13") { 
-    C_UA13 = C_UA13 + 1}
-  if(element == "12+") { 
-    C_12 = C_12 + 1}
-  if(element == "PG" || element == "G") { 
-    C_PG = C_PG + 1}
-}
-
-Certificate <- c("A", "U", "R", "UA", "UA13", "12", "PG")
-Frequency <- c(C_A, C_U, C_R, C_UA, C_UA13, C_12, C_PG)
-
-barplot(Frequency, names.arg = Certificate, xlab = "Certificate", ylab = "Frequency")
-ggplot(movie_data, mapping = aes(x=Runtime, y=Rating)) +  geom_point()
-
-Count_1 = 0
-Count_2 = 0
-Count_3 = 0
-Count_4 = 0
-Count_5 = 0
-Count_6 = 0
-Count_7 = 0
-Count_8 = 0
-Count_9 = 0
-Count_10 = 0
-Count_11 = 0
+list_1 = c(0,0,0,0,0,0,0)
+names(list_1) <- c("Genre_1","Genre_2","Genre_3","Genre_4","Genre_5","Genre_6", "Genre_7")
 
 for(element in movie_data$Genre)
 { 
   y = unlist(strsplit(element,","))
   if(str_contains(y, c("Action","War","Adventure"),ignore.case = TRUE,logic = "or"))
-    Count_1=Count_1+1
+    list_1["Genre_1"]=list_1["Genre_1"] + 1
   if(str_contains(y, c("Drama","Family"),ignore.case = TRUE,logic = "or"))
-    Count_2 = Count_2 + 1
+    list_1["Genre_2"] = list_1["Genre_2"] + 1
   if(str_contains(y, c("Fantasy","Sci-Fi"),ignore.case = TRUE,logic = "or"))
-    Count_3 = Count_3 + 1
+    list_1["Genre_3"] = list_1["Genre_3"] + 1
   if(str_contains(y, c("Crime","Mystery","Thriller"),ignore.case = TRUE,logic = "or"))
-    Count_4 = Count_4 + 1
+    list_1["Genre_4"] = list_1["Genre_4"] + 1
   if(str_contains(y, "Biography",ignore.case = TRUE,logic = "or"))
-    Count_5 = Count_5 + 1
+    list_1["Genre_5"] = list_1["Genre_5"] + 1
   if(str_contains(y, c("Comedy","Romance"),ignore.case = TRUE,logic = "or"))
-    Count_6 = Count_6 + 1
+    list_1["Genre_6"] = list_1["Genre_6"] + 1
   if(str_contains(y, "Horror",ignore.case = TRUE,logic = "or"))
-    Count_7 = Count_7 + 1
+    list_1["Genre_7"] = list_1["Genre_7"] + 1
 }
+
 genre_names<-c("Adventure,War,Action","Drama,Family","Fantasy,Sci-fi","Crime,Mystery,Thriller","Biography","Comedy,Romance","Horror")
-genre_count<-c(Count_1,Count_2,Count_3,Count_4,Count_5,Count_6,Count_7)
+genre_count<-c(list_1["Genre_1"],list_1["Genre_2"],list_1["Genre_3"],list_1["Genre_4"],list_1["Genre_5"],list_1["Genre_6"],list_1["Genre_7"])
 
 barplot(genre_count,names.arg=genre_names,xlab="Genre",ylab="Count",col="blue",
         main="Genre chart")
 pie(genre_count, genre_names, radius = 1, main = "Genre Chart")
 
-Count_less8.5 = 0
-Count_less9 = 0
-Count_less9.5 = 0
-Count_less10 = 0
+list_2 = c(0,0,0,0)
+names(list_2) <- c("Lessthan_8.5","Lessthan_9","Lessthan_9.5","Lessthan_10")
 
 for(element in movie_data$Rating)
 {
   if(element < 8.5)
-  Count_less8.5 = Count_less8.5+1
+  list_2["Lessthan_8.5"] = list_2["Lessthan_8.5"] + 1
   if(element >= 8.5 & element < 9)
-    Count_less9 = Count_less9+1
+    list_2["Lessthan_9"] = list_2["Lessthan_9"] + 1
   if(element >= 9 & element < 9.5)
-    Count_less9.5 = Count_less9.5+1
+    list_2["Lessthan_9.5"] = list_2["Lessthan_9.5"] + 1
   if(element >= 9.5)
-    Count_less10 = Count_less10+1
+    list_2["Lessthan_10"] = list_2["Lessthan_10"] + 1
     
 }
 
-Rating_list <- c(Count_less8.5, Count_less9, Count_less9.5, Count_less10)
+Rating_list <- c(list_2["Lessthan_8.5"], list_2["Lessthan_9"], list_2["Lessthan_9.5"], list_2["Lessthan_10"])
 Rating_name <- c("Less than 8.5", "Between 8.5 and 9", "Between 9 and 9.5", "Greater than 9,5")
-pie(Rating_list, Rating_name, radius = 1, main = "Rating Chart")
+barplot(Rating_list,names.arg=Rating_name,xlab="Rating",ylab="Frequency",col="blue",
+        main="Rating chart") 
+
+
+list_3 = c(0,0,0,0,0,0,0)
+names(list_3) <- c("60s_and_before", "70s", "80s","90s","00s","10s","20s")
+
+for(element in movie_data$Year)
+{ 
+  if(element < 1970)
+    list_3["60s_and_before"] = list_3["60s_and_before"] + 1
+  if(element >= 1970 && element < 1980)
+    list_3["70s"] = list_3["70s"] + 1
+  if(element >= 1980 && element < 1990)
+    list_3["80s"] = list_3["80s"] + 1
+  if(element >= 1990 && element < 2000)
+    list_3["90s"] = list_3["90s"] + 1
+  if(element >= 2000 && element < 2010)
+    list_3["00s"] = list_3["00s"] + 1
+  if(element >= 2010 && element < 2020)
+    list_3["10s"] = list_3["10s"] + 1
+  if(element >= 2020 && element < 2030)
+    list_3["20s"] = list_3["20s"] + 1
+}
+
+Year_list <- c("<70s", "70s", "80s", "90s", "00s", "10s", "20s")
+Year_count <- c(list_3["60s_and_before"], list_3["70s"], list_3["80s"], list_3["90s"], list_3["00s"], list_3["10s"], list_3["20s"])
+barplot(Year_count, names.arg = Year_list, xlab = "Year", ylab = "Frequency", col = "blue", main = "Year chart")
+
+list_4 = c(0,0,0,0,0,0)
+names(list_4) = c("<50k", "<100k", "<250k", "<500k", "<750k", "<1m")
+for(element in movie_data$Number_of_Votes)
+{ 
+  if(element < 50000)
+    list_4["<50k"] = list_4["<50k"] + 1
+  if(element >= 50000 && element < 100000)
+    list_4["<100k"] = list_4["<100k"] + 1
+  if(element >= 100000 && element < 250000)
+    list_4["<250k"] = list_4["<250k"] + 1
+  if(element >= 250000 && element < 500000)
+    list_4["<500k"] = list_4["<500k"] + 1
+  if(element >= 500000 && element < 750000)
+    list_4["<750k"] = list_4["<750k"] + 1
+  if(element >= 750000 && element < 1000000)
+    list_4["<1m"] = list_4["<1m"] + 1
+}
+
+Vote_list <- c("<50k", "<100k", "<250k", "<500k", "<750k", "<1m")
+Vote_Count <- c(list_4["<50k"], list_4["<100k"], list_4["<250k"], list_4["<500k"], list_4["<750k"], list_4["<1m"])
+barplot(Vote_Count, name.arg = Vote_list, xlab = "Vote Count", ylab = "Frequency", col = "blue", main = "Votes Chart")
+
+list_votes = c()
+for(element in movie_data$Number_of_Votes)
+{
+  list_votes = append(list_votes, element)
+}
+
+list_rating = c()
+for(element in movie_data$Rating)
+{
+  list_rating = append(list_rating, element)
+}
+
+rating_count=matrix(0,5,6)
+rownames(rating_count)=c("8","8.5", "9", "9.5", "10")
+colnames(rating_count)=c("<50k","<100k", "<250k", "<500k", "<750k", ">750")
+
+
+for(i in 1:1000)
+{ 
+
+    j = case_when(
+     list_rating[i] <= 8 ~ 1,
+     list_rating[i]<=8.5 ~ 2,
+     list_rating[i]<=9 ~ 3,
+     list_rating[i]<=9.5 ~ 4,
+     list_rating[i]<=10 ~ 5
+    )
+    if(list_votes[i]<= 50000)
+    {
+      rating_count[j,1] <- rating_count[j,1] + 1
+    }
+    if(list_votes[i] > 50000 && list_votes[i]<= 100000)
+    {
+      rating_count[j,2] <- rating_count[j,2] + 1
+    }
+    if(list_votes[i] > 100000 && list_votes[i]<= 250000)
+    {
+      rating_count[j,3] <- rating_count[j,3] + 1
+    }
+    if(list_votes[i] > 250000 && list_votes[i]<= 500000)
+    {
+      rating_count[j,4] <- rating_count[j,4] + 1
+    }
+    if(list_votes[i] > 500000 && list_votes[i]<= 750000)
+    {
+      rating_count[j,5] <- rating_count[j,5] + 1
+    }
+    if(list_votes[i] > 750000)
+    {
+      rating_count[j,6] <- rating_count[j,6] + 1
+    }
+  }
+
+
+heatmap(t(rating_count))
+
 
