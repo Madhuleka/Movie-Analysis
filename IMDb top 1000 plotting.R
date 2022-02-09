@@ -73,12 +73,6 @@ Rating_name <- c("Less than 8.5", "Between 8.5 and 9", "Between 9 and 9.5", "Gre
 barplot(Rating_list,names.arg=Rating_name,xlab="Rating",ylab="Frequency",col="blue",
         main="Rating chart") 
 
-#Plots a scatterplot runtime vs the rating the movie has received
-
-plot(movie_data$Runtime, list_rating)
-model = lm(list_rating ~ movie_data$Runtime)
-abline(model)
-
 #Creates list that initialises variables to count frequency of decade of release
 #of movies and plot a bar chart to visualise the distribution of the different
 #decades in the top 1000 list
@@ -132,7 +126,7 @@ for(element in movie_data$Number_of_Votes)
 
 Vote_list <- c("<50k", "<100k", "<250k", "<500k", "<750k", "<1m")
 Vote_Count <- c(list_4["<50k"], list_4["<100k"], list_4["<250k"], list_4["<500k"], list_4["<750k"], list_4[">1m"])
-barplot(Vote_Count, name.arg = Vote_list, xlab = "Vote Count", ylab = "Frequency", col = "blue", main = "Votes Chart")
+barplot(Vote_Count, names.arg = Vote_list, xlab = "Vote Count", ylab = "Frequency", col = "blue", main = "Votes Chart")
 
 
 #Creates a matrix with rating as rows and the number of votes as columns and
@@ -149,6 +143,12 @@ for(element in movie_data$Rating)
 {
   list_rating = append(list_rating, element)
 }
+
+#Plots a scatterplot runtime vs the rating the movie has received
+
+plot(movie_data$Runtime, list_rating)
+model = lm(list_rating ~ movie_data$Runtime)
+abline(model)
 
 rating_count=matrix(0,5,6)
 rownames(rating_count)=c("8","8.5", "9", "9.5", "10")
@@ -195,16 +195,16 @@ for(i in 1:1000)
 #Plots scatter plot of rating vs the log of the number of votes
 
 
-plot(log(list_votes), list_rating)
+plot(log(list_votes), list_rating, xlab = "log of number of votes", ylab = "Rating")
 model = lm(list_rating ~ log(list_votes))
 abline(model)
 
 col_set <- rainbow(5)
 par(mar=c(5.1, 4.1, 4.1, 8), xpd=TRUE)
-matplot(t(rating_count), type = "l", xlab="Rating",col=col_set,lty=c(1:14),lwd=3)
+matplot(t(rating_count), type = "l", xlab="Rating", ylab = "Frequency", col=col_set,lty=c(1:14),lwd=3, log = "y", xaxt='n')
 xcolnames<-c("<50k","<100k", "<250k", "<500k", "<750k", ">750k")
 names <- c("8","8.5", "9", "9.5", "10")
-axis(side=1, at=1:length(colnames), labels=colnames)
+axis(side=1, at=1:length(xcolnames), labels=xcolnames)
 legend("right", inset = c(-0.35,0 ),                   
        legend = names,xpd=TRUE,cex=0.8, lty=c(1:14),col=col_set,lwd=3)
 
@@ -287,7 +287,7 @@ genres = c("Adventure", "War", "Action", "Drama", "Family",
            "Biography", "Comedy", "Romance", "Horror")
 
 par(mar=c(5.1, 4.1, 4.1, 8), xpd=TRUE)
-matplot(t(genre_vs_votes), type = "l", xlab="Number of Votes",col=col_set,lty=c(1:14),lwd=3)
+matplot(t(genre_vs_votes), type = "l", xlab="Number of Votes", ylab = "Frequency", col=col_set,lty=c(1:14),lwd=3, log = "y", xaxt='n')
 axis(side=1, at=1:length(colnames), labels=colnames)
 legend("right", inset = c(-0.35,0 ),                   
        legend = genres,xpd=TRUE,cex=0.8, lty=c(1:14),col=col_set,lwd=3)
@@ -353,7 +353,8 @@ col_set <- rainbow(14)
 colnames<-c("8","8.5", "9", "9.5", "10")
 
 par(mar=c(5.1, 4.1, 4.1, 8), xpd=TRUE)
-matplot(t(genre_vs_rating), type = "l", xlab="Rating",col=col_set,lty=c(1:14),lwd=3)
+matplot(t(genre_vs_rating), type = "l", xlab="Rating", ylab = "Frequency", col=col_set,lty=c(1:14),lwd=3, log = "y", xaxt='n')
 axis(side=1, at=1:length(colnames), labels=colnames)
 legend("right", inset = c(-0.35,0 ),                   
        legend = genres,xpd=TRUE,cex=0.8, lty=c(1:14),col=col_set,lwd=3)
+
